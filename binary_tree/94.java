@@ -56,3 +56,30 @@ public class Solution {
         return res;
     }
 }
+//morris traversal
+public class Solution {
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<Integer>();
+        TreeNode cur = root;
+        while(cur != null){
+            if(cur.left == null){//1.current node doesn't have left child, so it is time to output it
+                res.add(cur.val);
+                cur = cur.right;
+            }
+            else{
+                TreeNode pre = cur.left;
+                while(pre.right != null && pre.right != cur) pre = pre.right;
+                if(pre.right == null){//2.1 find the rightmost node of the left sub tree of the current node, left the current node be its right child
+                    pre.right = cur;
+                    cur = cur.left;
+                }
+                else if(pre.right == cur){//2.2 it is time to ouput the current node (which has left child), and we need to restore the origin tree structure
+                    pre.right = null;
+                    res.add(cur.val);
+                    cur = cur.right;
+                }
+            }
+        }
+        return res;
+    }
+}

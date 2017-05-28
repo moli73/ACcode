@@ -59,3 +59,29 @@ public class Solution {
 }
 
 //version 4: morris iteration traversal
+public class Solution {
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<Integer>();
+        TreeNode cur = root;
+        while(cur != null){
+            if(cur.left == null){
+                res.add(cur.val);
+                cur = cur.right;
+            }
+            else{
+                TreeNode pre = cur.left;
+                while(pre.right != null && pre.right != cur) pre = pre.right;
+                if(pre.right == null){
+                    pre.right = cur;
+                    res.add(cur.val);//the difference from the inorder morris traversal
+                    cur = cur.left;
+                }
+                else if(pre.right == cur){
+                    pre.right = null;
+                    cur = cur.right;
+                }
+            }
+        }
+        return res;
+    }
+}
