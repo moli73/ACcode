@@ -22,63 +22,54 @@ public class Solution {
 public class Solution {
     public int lengthOfLIS(int[] nums) {
         int n = nums.length;
-        int[] tails = new int[n];
+        int[] tails = new int[n + 1];//tails[i] presents the minTails of the length of i of subsequence
         int res = 0;
+        tails[0] = Integer.MIN_VALUE;//initialization
         for(int i = 0; i < n; ++i){
             int left = 0, right = res;
-            while(left < right){
-                int mid = (left + right) / 2;
-                if(tails[mid] < nums[i]) left = mid + 1;
+            while(left + 1 < right){
+                int mid = left + (right - left) / 2;
+                if(tails[mid] < nums[i]) left = mid;
                 else right = mid;
-            }
-            tails[left] = nums[i];
-            if(res == left) ++res;
+            }//the first larger tails always be right one
+            if(tails[right] < nums[i]){
+                res++;
+                tails[res] = nums[i];
+            } else tails[right] = nums[i];
         }
         return res;
     }
 }
 (1) if x is larger than all tails, append it, increase the size by 1
 (2) if tails[i-1] < x <= tails[i], update tails[i]
-// O(nlogn) Binary Search
+// O(nlogn) Binary Search， from jiuzhang
 public class Solution {
-    /**
-     * @param nums: The integer array
-     * @return: The length of LIS (longest increasing subsequence)
-     */
-    public int longestIncreasingSubsequence(int[] nums) {
-        int[] minLast = new int[nums.length + 1];
-        minLast[0] = Integer.MIN_VALUE;
-        for (int i = 1; i <= nums.length; i++) {
-            minLast[i] = Integer.MAX_VALUE;
+    public int lengthOfLIS(int[] nums) {
+        if(nums.length == 0) return 0;
+
+        int n = nums.length;
+        int[] dp = new int[n + 1];
+        dp[0] = Integer.MIN_VALUE;
+        for(int i = 1; i <= n; ++i){
+            dp[i] = Integer.MAX_VALUE;
         }
 
-        for (int i = 0; i < nums.length; i++) {
-            // find the first number in minLast >= nums[i]
-            int index = binarySearch(minLast, nums[i]);
-            minLast[index] = nums[i];
+        for(int i = 0; i < n; ++i){
+            int left = 0, right = n;
+            while(left + 1 < right){
+                int mid = left + (right - left) / 2;
+                if(dp[mid] <= nums[i]) left = mid;
+                else right = mid;
+            }
+            if(dp[left] >= nums[i]) dp[left] = nums[i];
+            else dp[right] = nums[i];
         }
 
-        for (int i = nums.length; i >= 1; i--) {
-            if (minLast[i] != Integer.MAX_VALUE) {
+        for(int i = n; i >= 0; --i){
+            if(dp[i] != Integer.MAX_VALUE){
                 return i;
             }
         }
-
         return 0;
-    }
-
-    // find the first number > num
-    private int binarySearch(int[] minLast, int num) {
-        int start = 0, end = minLast.length - 1;
-        while (start + 1 < end) {
-            int mid = (end - start) / 2 + start;
-            if (minLast[mid] < num) {
-                start = mid;
-            } else {
-                end = mid;
-            }
-        }
-
-        return end;
     }
 }
