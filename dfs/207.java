@@ -1,4 +1,4 @@
-//version 1: use ordering label checking
+//version 1: use ordering label checking --> 用的coursera上的讲的方法
 public class Solution {
     private int order;
     public boolean canFinish(int numCourses, int[][] prerequisites) {

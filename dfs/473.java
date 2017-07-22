@@ -48,3 +48,47 @@ public class Solution {
         }
     }
 }
+//version 2: divide and conquer
+public class Solution {
+    public boolean makesquare(int[] nums) {
+        if (nums.length == 0) return false;
+
+        Arrays.sort(nums);
+
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+
+        if (sum % 4 != 0) return false;
+        int edgeLen = sum / 4;
+
+        for (int i = 0; i < 4; i++) {
+            int start = nums.length - 1;
+            if (!findEdge(nums, edgeLen, start)) return false;
+        }
+        return true;
+    }
+
+    private boolean findEdge(int[] nums, int remain, int start) {
+        if (remain == 0) {
+            return true;
+        } else if(remain < 0) {
+            return false;
+        }
+
+        for (int i = start; i >= 0; i--) {
+            if (nums[i] > 0) {
+
+                nums[i] = -nums[i];
+
+                if (findEdge(nums, remain + nums[i], i - 1)) return true;
+
+                else {
+                    nums[i] = -nums[i];
+                }
+            }
+        }
+        return false;
+    }
+}
