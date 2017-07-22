@@ -42,3 +42,46 @@ public class Solution {
         }
     }
 }
+
+//mock intervew
+public class Solution {
+    public List<List<String>> partition(String s) {
+        List<List<String>> res = new ArrayList<>();
+        if(s == null || s.length() == 0) {
+            return res;
+        }
+
+        int n = s.length();
+        boolean[][] isValid = new boolean[n][n];
+        char[] str = s.toCharArray();
+
+        for(int l = 1; l <= n; l++) {
+            for(int i = 0; i < n - l + 1; i++) {
+                int j = i + l - 1;
+                isValid[i][j] = (str[i] == str[j])
+                && (i + 2 > j || isValid[i + 1][j - 1]);//tricky point, good to remember
+            }
+        }
+
+        List<String> comb = new ArrayList<>();
+
+        helper(res, comb, 0, isValid, s);
+        return res;
+    }
+
+    public void helper(List<List<String>> res, List<String> comb,
+    int pos, boolean[][] isValid, String s) {
+        if(pos == s.length()) {
+            res.add(new ArrayList<String>(comb));
+            return;
+        }
+
+        for(int i = pos; i < s.length(); i++) {
+            if(isValid[pos][i]) {
+                comb.add(s.substring(pos, i + 1));
+                helper(res, comb, i + 1, isValid, s);
+                comb.remove(comb.size() - 1);
+            }
+        }
+    }
+}

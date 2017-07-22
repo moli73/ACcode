@@ -115,3 +115,70 @@ public class Solution {
         return res;
     }
 }
+//version 3: add Trie Tree and startWith parameter of each TrieNode
+public class Solution {
+    class TrieNode {
+        TrieNode[] children = new TrieNode[26];
+        List<String> startWith = new ArrayList<String>();
+    }
+
+    public TrieNode makeTrie(String[] words) {
+        TrieNode root = new TrieNode();
+        for(String word : words) {
+            TrieNode ws = root;
+            ws.startWith.add(word);
+
+            for(char c : word.toCharArray()) {
+                if(ws.children[c - 'a'] == null) {
+                    ws.children[c - 'a'] = new TrieNode();
+                }
+                ws = ws.children[c- 'a'];
+                ws.startWith.add(word);
+            }
+        }
+        return root;
+    }
+
+    public List<String> search(TrieNode root, String prefix) {
+        TrieNode ws = root;
+        for(char c : prefix.toCharArray()) {
+            if(ws.children[c - 'a'] == null) {
+                return new ArrayList<String>();
+            }
+            ws = ws.children[c - 'a'];
+        }
+        return ws.startWith;
+    }
+
+    public List<List<String>> wordSquares(String[] words) {
+        List<List<String>> res = new ArrayList<>();
+        List<String> comb = new ArrayList<>();
+        TrieNode root = makeTrie(words);
+
+        helper(res, comb, root, new String(), words[0].length());
+
+        return res;
+    }
+
+    public void helper(List<List<String>> res, List<String> comb, TrieNode root, String prefix, int n) {
+        if(comb.size() == n) {
+            res.add(new ArrayList<String>(comb));
+            return;
+        }
+
+        List<String> next = search(root, prefix);
+
+        for(String word : next) {
+            comb.add(word);
+
+            StringBuffer sb = new StringBuffer();
+            for(int i = 0; i < comb.size() && comb.size() < n; i++) {
+                sb.append(comb.get(i).charAt(comb.size()));
+            }
+
+            helper(res, comb, root, sb.toString(), n);
+
+            comb.remove(comb.size() - 1);
+        }
+    }
+}
