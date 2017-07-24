@@ -1,24 +1,24 @@
 binary tree, DFS
-Template 1: Traverse
+Template 1: Traverse          是从上到下的遍历
 
 public class Solution {
     public void traverse(TreeNode root) {
         if (root == null) {
             return;
         }
-        // do something with root
+        // do something with root        -- preorder
         traverse(root.left);
-        // do something with root
+        // do something with root        -- inorder
         traverse(root.right);
-        // do something with root
+        // do something with root        -- postorder
     }
 }
 
-Tempate 2: Divide & Conquer
+Tempate 2: Divide & Conquer   是从上到下分，但是是从底向上计算（合并）的
 
 public class Solution {
     public ResultType traversal(TreeNode root) {
-        // null or leaf
+        // 终止条件为null，叶子或者其他
         if (root == null) {
             // do something and return;
         }
@@ -34,6 +34,7 @@ public class Solution {
 }
 
 binary tree, BFS, one queue + loop
+// 若是不需要分层输出，则可以不用使用loop
 public class Solution {
     public ArrayList<ArrayList<Integer>> levelOrder(TreeNode root) {
         ArrayList result = new ArrayList();

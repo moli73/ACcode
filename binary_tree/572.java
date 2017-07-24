@@ -32,9 +32,10 @@ public class Solution {
     }
 }
 
-//best solution
+//best solution, 分治套分治
 public class Solution {
     public boolean isSubtree(TreeNode s, TreeNode t) {
+        if(t == null) return true;//特殊case,如果s和t可以是empty tree
         if(s == null) return false;
         if(helper(s, t)) return true;
         return isSubtree(s.left, t) || isSubtree(s.right, t);

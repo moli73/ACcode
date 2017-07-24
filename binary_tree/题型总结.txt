@@ -1,0 +1,206 @@
+#1#大部分binary tree都可以用divide and conquer解决：
+helper(),是递归函数
+left,right分别表示左子树和右子树的递归函数返回值
+寻找递归条件的时候，一定要画图，归纳出子树与当前节点的关系。
+以及思考，最后递归终止条件情况，是否全部包含了。
+
+1.终止条件，常常是空节点。
+2.如果当分治函数返回值，和最终结果一样，则主函数即是分治helper函数，同时helper函数参数，通常就是当前节点（root）。
+例题
+#104，求binary tree最大深度。
+1）函数特点：helper函数返回值也是subtree的最大深度。
+2）递归条件（分治根据）：当前节点最大深度 = max(左子树深度，右子树深度) + 1。
+3）终止条件：root == null时，深度为0。
+
+#111，求binary tree最小深度。
+关键，递归条件：当无一边孩子的时候，当前最小树高必须是有孩子那边+1
+return（left == 0 || right == 0）？left + right + 1 ： Math.min(left, right) + 1;
+（此题也有BFS解法，找到第一个叶子，返回树高即可）
+
+#226，invert binary tree
+1）函数特点：helper返回invert后的TreeNode
+2）递归条件：当前root.left = helper(root.right); root.right = helper(root.left);即交换inverted后的左右子树
+3）终止条件：root == null时，不用交换，直接返回null（root）
+
+#404，sum of left leaves
+递归条件：
+int cut = 0;
+if(root.left != null && root.left.left == null && root.left.right == null) cur = root.left.val;
+return cur + left + right;
+
+#606， tree2str，注意递归条件，分成左右空，右空，和左右都不空三种情况。
+if(left.length() == 0 && right.length() == 0) return cur;
+if(right.length() == 0) return cur + '(' + left + ')';
+return cur + '(' + left + ')' + '(' + right + ')';
+
+3.终止条件，特别的情况
+#100same tree系列），isSameTree，遍历两个树
+1）函数特点：返回值是（boolean）两棵树是否same，但是函数参数是两个树的根，和一个没什么区别，相当于一个函数，同时DFS两棵树而已。
+2）递归条件：当前节点p，q为根的两个树是否相同，取决于两棵树的左子树和右子树是否，同时，当前节点（root）的val相同。
+3）终止条件：if(p == null && q == null) return true; else if(p == null || q == null || q.val != p.val) return false;//判断是否相同树的特殊写法，
+这样简介，同时把当前节点值是否相同提前判断了。之后，只需要return 左子树和右子树same与否情况（后面有类似题目，终止条件）。
+
+#101（same tree系列），isSymmetry，特别一点，判断交换判断左右子树是否相同。
+（关键，此题还有iteration解法，1.用两个stack，相当于是recursion转iteration；
+2.BFS，等价于，将树左右对称一下，和原树相同就是true。用一个queue解决，将root入栈两次，第一个从左往右遍历，另一个从右往左遍历，判断当前节点状态）
+
+4.特别的递归条件，比较不容易直接归纳出来，终止条件也特别
+#235寻找lowestCommonAncestor（前提：给的两个节点p和q，一定存在树上）
+1）函数特点：返回值为当前树找到的lowestCommonAncestor。
+2）递归条件：1.两个点分别在左右子树上，则返回当前root节点。2.两个点在一边子树上，则返回，子树上的lowestCommonAncestor的值。3.如果两边都没有，则返回空
+3）终止条件：null节点，返回空；如果当前root是p或者q，返回当前节点（因为，如果q是p的后代，那q也是答案）。
+public class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root == null || root == p || root == q) return root;//终止条件
+
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
+
+        if(left != null && right != null) return root;／/分治条件
+        else if(left != null) return left;
+        else return right;
+    }
+}
+
+5.分治函数返回值，和最终结果不一样，则得另外写helper函数
+#110，判断isBalanced。最终结果是boolean，分治helper函数，需要返回树深度（用深度好用分治，用level适合用recursion遍历，将level当成分治函数参数，每次调用函数，level加一）
+1）函数特点：返回当前树的深度。利用深度不为负数，可以让-1代表，not balanced
+2）递归条件：
+if(Math.abs(right - left) > 1 || left == -1 || right == -1) return -1;
+else return Math.max(right, left) + 1;
+3）终止条件：null节点，返回0
+4）主函数返回值：check root 树的深度是否为-1：return helper(root) == -1;
+
+#337，返回参数，是或不选当前节点的两种results
+关键点:当前点选择不偷的时候，子树是可以选择偷或者不偷的，所以取max
+cur.rob = left.not + right.not + root.val; cur.not = Math.max(left.rob, left.not) + Math.max(right.rob, right.not); return cur;
+
+6.带其他参数的helper函数(分治带global变量情况--可以用global，也可以用参数赋给helper)；这种情况，分治函数返回值一般不是results的值，只是会用于求result。
+#112（pathSum系列），root to leaf
+1）函数特点：返回boolean是否有和为目标值的路径，但是helper函数的参数除了root外，还有目标sum值。
+2）递归条件：返回左子树或右子树（二者满足其一就可以），是否有和为sum - root.val的path
+3）终止条件：除了null返回false外，当叶子节点时，且目标值等于root值时，就可以直接返回true了。多终止条件
+public class Solution {
+    public boolean hasPathSum(TreeNode root, int sum) {
+        if(root == null) return false;
+
+        if(root.left == null && root.right == null && sum == root.val) return true;
+
+        boolean left = hasPathSum(root.left, sum - root.val);
+        boolean right = hasPathSum(root.right, sum - root.val);
+
+        return left || right;
+    }
+}
+#250，countUnivalSubtrees
+分治函数需要return是否是相同值，同时需要一个全局变量，记录count的个数。
+关键，终止条件：null节点，返回true。
+递归条件：左右子树都是同数值，且左右节点值都和当前节点值相同时，count加一，并返回true；其余情况只返回false。
+
+#543，diameterOfBinaryTree
+需要全局变量，在每个节点，比较diameter大小，更新result
+关键，分治函数，返回的是子树深度；判断更新的是左右子树深度和加一，与res比大小更新
+
+#366，此题转化巧妙，用每个节点的深度，来表明入数组的时间。另外，res数组的增长是安顺序的，可以用res的size和当前节点深度比较来做扩容标志
+if(cur > res.size()) res.add(new ArrayList<Integer>());
+res.get(cur - 1).add(root.val);
+
+#563，分治helper返回sum of tree， global变量res每次更新
+
+#124， maxPathSum。
+分治函数，当前节点到叶子的最大sum。全局变量，在每个节点处，更新一下。注意，比较跨左右的path sum，以及int可以为负数。
+
+#298，longConsecutive。全局变量，每个节点，更新。
+(不需要在每个节点都去helper，一个helper就可以解决。1.不连续return值归1就行。
+2.不需要返回孩子节点，因为left right可以孩子直接检查到。)
+函数返回值是子树，连续的个数。
+关键是，函数递归条件：
+int cur = 0；
+if(root.left != null && root.left.val != root.val + 1) left = 0;
+if(root.right != null && root.right.val != root.val + 1) right = 0;
+cur = Math.max(left, right) + 1;
+res = Math.max(cur, res);
+return cur;
+
+#549，longConsecutive，上升下降都行，那就记录升序个数，和降序的个数。递归条件几乎同上。只是对升序和降序分别更新，然后更新res时，将跨左右合并更新。
+
+#105，#106（counstruct系列）
+1）分别移动数组指针，这样时间复杂度低
+2）找到根节点，对剩下的进行递归
+3）前提是无重复node
+
+#536， str2tree，注意多种情况，1. 450，2.456()(), 3.450(). 还有string的函数使用等等问题
+
+#297, serialize and deserialize tree
+解1:#536和#606合体
+解2:DFS，preorder traversal，关键，将所有的节点的空孩子都用‘X’ 表示，用‘，’隔开；然后再用split分离，分治法，构建二叉树。
+解3:BFS形式的解法。
+
+
+7. 分治套分治的解题
+#572（same tree系列）. isSubtree
+第一层分治，是基本preorder traversal，遍历树的每个节点，从当前节点起，判断是否有subTree
+第二层分治，真正的helper函数，做isSame的分治
+Corner Case: {1,2,3}, {}
+#437（pathSum系列），相同的模式，分治套分治。（对比recursion套recursion，变量的区别）
+
+
+#2#recursion traversal类型的解题：
+1.这样的解题方法中，helper函数通常是无返回值，而且带除root之外的其他随遍历变化的参数，还有一个表示最终结果的全局变量。
+#113，类似backtracking在binary tree上的使用。就是recursion traversal，helper函数带参数，无返回值（与分治的重要区别）
+与一般的backtracking简单的是，没有for循环而是，每个点可能性只有左右两个孩子。comb的增删与一般的可能有点区别，是在每个节点自己所在helper函数进行的。
+终止条件，是null返回，叶子节点且满足目标值，输出返回。
+public class Solution {
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        List<Integer> comb = new ArrayList<Integer>();
+        helper(res, root, sum, comb);
+        return res;
+    }
+
+    public void helper(List<List<Integer>> res, TreeNode root, int sum, List<Integer> comb){
+        if(root == null) return;
+        comb.add(root.val);
+        if(root.left == null && root.right == null && root.val == sum){
+            res.add(new ArrayList(comb));
+        } else{
+            helper(res, root.left, sum - root.val, comb);
+            helper(res, root.right, sum - root.val, comb);
+        }
+        comb.remove(comb.size() - 1);//为什么要删的原因，是不是所有路都是可行的，删除回溯，走另一条路
+    }
+}
+#257，类似的backtracking，都是用recursion traversal带全局变量实现。只是此题，所有路径都需要输出，没有删除这个操作。
+终止条件是，null返回，叶子节点则输出返回。
+
+#129，sumNumber，helper函数带sum随着level深入不断乘10，同时用res全局变量不断叠加结果。
+
+2.recursion套recursion的解题
+#437，需要从每个点，开始检测是否能有path sum为目标值
+第一个helper是，用preorder traversal去遍历每个节点，对当前节点，做path sum的检测
+第二层helper是，从每个节点，开始检测是否path sum为目标值。每次recursion，目标值参数减去当前值。
+
+
+#3#BFS解题
+1.明显的BFS，直接套模版。
+#102，level traversal
+#199，level traversal只输出每行最后一个
+#513，level traversal。从右往左，这样最后一个节点就是答案。
+#515，level traversal，每行再找个最大值就行。
+#103，zigzagLevelOrder，分成两端入list，一个从头入，一个从尾入，但是入queue的顺序还是不变。
+
+#4#特别的iteration解题：
+#222求complete tree的节点个数
+分治 + iteration解答：分别向最左和最有iterate找到深度，二者深度相同，则用2^n算节点，若不同（一定差1），则递归左子树和右子树然后加1（跟节点）。
+算法复杂度对O(logn*logn)
+
+#114,preorder traversal的iteration版本变形，还能用morris算法解答。
+
+#116，类似linked list题目，充分利用next，和满树的条件。（若不考虑空间，可用BFS），参考程序。
+#117，利用一个dummy节点做每一层过度，十分巧妙，看程序。
+
+#156，upsideDownBinaryTree，注意题目前提，充分限定了树的形状。所以题目，其实是一个类似linked list的题目。利用pre，cur，next，temp，存储节点，完成。
+
+#5#其他题型：
+#508，findFrequentTreeSum，分治和hash table的合作。注意，找most frequency的巧妙方法，不断更新maxCount的值。递归函数返回，sum值就行。
+#582，建立在tree数据模型上的题目，结合hash table和BFS即可解决
