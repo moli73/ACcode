@@ -8,9 +8,9 @@ public class Solution {
                 map.put(sum, i);
             }
             if(map.containsKey(sum - k)) {
-                res = Math.max(res, i - map.get(sum - k));
+                res = Math.max(res, i - map.get(sum - k));//更新最长结果
             }
-            if(sum == k) {
+            if(sum == k) {//当前sum为k，则一定是最长的。
                 res = i + 1;
             }
         }
