@@ -18,3 +18,17 @@ public class Solution {
         return left && right;
     }
 }
+
+//better solution
+public class Solution {
+    public boolean verifyPreorder(int[] preorder) {
+        Stack<Integer> stack = new Stack();
+        int low = Integer.MIN_VALUE;
+        for(int cur : preorder){
+            if(cur <= low) return false;
+            while(!stack.empty() && cur > stack.peek()) low = stack.pop();
+            stack.push(cur);
+        }
+        return true;
+    }
+}
