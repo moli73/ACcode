@@ -1,6 +1,9 @@
 binary search template tips:
 1.数组必须是sorted的
-2.找到pointer的可移动范围，即初始start和end值
+2.找到pointer的可移动范围，即初始start和end值：
+    1）有的是mid与start和end比较
+    2）有的是mid与mid两边情况比较：#162find peak number
+    3）有的是其他的比较方式
 3.循环退出条件为，相邻退出：start + 1 < end， 即最终数组里面有两个element
 4.核心思想，通过对mid情况的判断，删掉不可能存在答案的一半，向一定有答案的一半缩小
 5.根据题目要求，使用if else判断所剩的start和end谁是answer
@@ -14,6 +17,7 @@ binary search题目总结：
 
 5.binary search常常和hash table， two pointers， sorted等题型相关
 如（two pointers）#475heaters：转换为，判断所有house到heater的最近距离，这些距离当中的最大值，即为最小heater覆盖半径。
+（遍历每个heater会出现重叠，因为每个heater理论上可以覆盖所有house，需要去判断谁更近。所以反过来，遍历每个house，为他们找最近的heater。）
 关键点：1.先将两数组排序。2.扫描每个house，全局指针指向heater，找当前house最近heater，利用公式while(house >= heaters[i] + heaters[i + 1]) i++
 下一个house，接着从当前heater[i]进行判断。然后，更新res = max(res, abs(house - heater[i]))
 因为，当house >= heaters[i] + heaters[i + 1]时，说明，heaters[i]并不是距离house最近的一个，所以右移i
@@ -74,12 +78,70 @@ ps.1)注意第k大，在数组的下标时k - 1
 
 8.search in rotated array
 无duplicate的时候，首先判断mid在那一段上
-         - |                        nums[mid] > nums[end] 在左段
+         - |                        nums[mid] > nums[end] 在左段，然后再分类讨论。
         -  |
        -   |                        nums[mid] == nums[end] 的情况，只有在mid和最后一个元素重合时才会出现
       -    |
 -----------|----------
-           |     -                  nums[mid] <= nums[end] 在右段
+           |     -                  nums[mid] <= nums[end] 在右段,然后再分类讨论。
            |   -
            | -
 有duplicate的时候，对nums[mid] == nums[end]的情况特殊处理，此时只能将end--。所以，极端情况时间复杂度降为O(n).
+
+强化班补充：
+二维的二分法，
+#find peak number2
+注意找起点的时候是找中间行或者中间列中的最大值进行判断。
+
+按值二分：
+#69 sqrt 寻找平方小于等于x的最大值
+#sqrt2
+double型的二分法，设置eps，只能用相等退出loop去做。
+
+#278 find bad version
+找第一个badversion，是badversion 的最小值
+
+#287 find duplicate number
+对于小于重复数x以及重复数x，比它们小的数的个数都小于自身值；
+比重复数x大的数，比它们小的数的个数大于等于自身值；
+所以即是，找到满足比它小的数的个数小于它自身值的最大值。
+
+#wood cut
+二分值域：
+最小可能1，最大可能是单个木条最长的长的；
+注意切不出来的情况，返回0。即是len为1，也切不出k条木条。
+
+#copy books（还有DP解法（未做））
+目标值：寻找满足需要的人数<=k，的最大工作时长的最小值
+check函数：每个mid值代表的是最大的工作时长，判断在这个最大时长限制下，最多少需要多少人，是否<=k。
+特别的，如果某本书页数大于mid，则返回MAX_VALUE，在mid限制下无法完成。
+（最大工作时长越小，需要的人肯定更多。）
+
+#644. Maximum Average Subarray II
+值域：给定数组中的最大值和最小值，便是自数组平均值的值域。
+目标：找到长度不小于k的子树组中的最大平均值的最大值。
+check函数（tricky难点—— 利用了窗口，子树组的套路）：
+Suppose, there exist jj elements, a_1, a_2, a_3..., a_ja1,a2,a3...,aj in a subarray within numsnumssuch that their average is greater than midmid.
+ In this case, we can say that
+(a1+a2+a3...+aj)/j≥mid(a1+a2+a3...+aj)/j≥mid or
+(a1+a2+a3...+aj)≥j∗mid(a1+a2+a3...+aj)≥j∗mid or
+(a1−mid)+(a2−mid)+(a3−mid)...+(aj−mid)≥0
+
+    public boolean isValid(int[] nums, double mid, int k) {
+        int n = nums.length;
+        double[] preDiffSum = new double[n + 1];
+        double minPreDiffSum = 0;
+        preDiffSum[0] = 0;
+        for(int i = 1; i <= n; i++) {
+            preDiffSum[i] = preDiffSum[i - 1] + nums[i - 1] - mid;
+            if(i >= k && preDiffSum[i] - minPreDiffSum >= 0) {
+                return true;
+            }
+            if(i >= k) {
+                minPreDiffSum = Math.min(minPreDiffSum, preDiffSum[i - k + 1]);
+            }
+        }
+        return false;
+    }
+
+同时类比sqrt2中对浮点数二分法的处理方法。

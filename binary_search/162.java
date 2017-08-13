@@ -5,7 +5,7 @@ public class Solution {
         while(start + 1 < end){
             mid = start + (end - start) / 2;
             if(nums[mid - 1] < nums[mid] && nums[mid + 1] < nums[mid]) return mid;
-            else if(nums[mid - 1] > nums[mid]) end = mid;
+            else if(nums[mid - 1] > nums[mid]) end = mid;//不会碰见边界值。
             else start = mid;
         }
         return nums[start] > nums[end] ? start : end;
