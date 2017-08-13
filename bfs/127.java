@@ -39,3 +39,53 @@ class Solution {
         return 0;
     }
 }
+
+//mock version
+public class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        Set<String> dict = new HashSet<>(wordList);
+        Map<String, List<String>> graph = new HashMap<>();
+
+        dict.add(beginWord);
+        for(String word : dict) {
+            graph.put(word, getAdj(word, dict));
+        }
+
+        Queue<String> q = new LinkedList<>();
+        q.offer(beginWord);
+        dict.remove(beginWord);
+        int level = 0;
+
+        while(!q.isEmpty()) {
+            int size = q.size();
+            level++;
+            for(int i = 0; i < size; i++) {
+                String node = q.poll();
+                if(node.equals(endWord)) {
+                      return level;
+                }
+                for(String adj : graph.get(node)) {
+                      if(!dict.contains(adj)) continue;
+                      dict.remove(adj);
+                      q.offer(adj);
+                }
+            }
+        }
+        return 0;
+    }
+
+    public List<String> getAdj(String word, Set<String> dict) {
+        List<String> adjs = new ArrayList<>();
+        for(int i = 0; i < word.length(); i++) {
+            for(char c = 'a'; c <= 'z'; c++) {
+                StringBuffer sb = new StringBuffer(word);
+                if(c == word.charAt(i)) continue;
+                sb.setCharAt(i, c);
+                if(dict.contains(sb.toString())) {
+                    adjs.add(sb.toString());
+                }
+            }
+        }
+        return adjs;
+    }
+}
