@@ -1,9 +1,10 @@
 //mock interview
+//九章解法：
 public class Solution {
     public void sortColors(int[] nums) {
         int left = 0, right = nums.length - 1, i = 0;
 
-        while(i < nums.length && i <= right) {
+        while(i <= right) {
             if(nums[i] == 2) {//current is 2
                 int temp = nums[i];
                 nums[i] = nums[right];
@@ -47,21 +48,27 @@ public class Solution {
     }
 }
 
-//other solution and the best one:
-// public class Solution {
-//     public void sortColors(int[] nums) {
-//         int left = 0;
-//         int right = nums.length - 1;
-//         for (int i = 0; i <= right; i++){
-//             while (nums[i] == 2 && i < right) swap(nums, i, right--);//先检查2，往前换回来的，可能是0，则在后面，还能检查到
-//             while (nums[i] == 0 && i > left) swap(nums, i, left++);//检查0，从前面换过来的肯定是1
-//             //[1,2,0]
-//         }
-//     }
-//
-//     public void swap(int[] nums, int i, int j){
-//         int tmp = nums[i];
-//         nums[i] = nums[j];
-//         nums[j] = tmp;
-//     }
-// }
+//final version:
+//third times
+//一定要先往后放2,因为再把2往后放的时候，有可能从后面把0换前来了，后放0则可解决这个问题。
+//同时，把0往前往前放的时候，前面就已经不可能有2了。
+//corner case: [1,2,0]
+public class Solution {
+    public void sortColors(int[] nums) {
+        int left = 0, right = nums.length - 1;
+        for(int i = 0; i <= right; i++) {
+            while(i <= right && nums[i] == 2) {
+                int temp = nums[i];
+                nums[i] = nums[right];
+                nums[right] = temp;
+                right--;
+            }
+            while(left <= i && nums[i] == 0) {
+                int temp = nums[i];
+                nums[i] = nums[left];
+                nums[left] = temp;
+                left++;
+            }
+        }
+    }
+}
