@@ -1,3 +1,6 @@
+//Sort + Two pointers
+//time O(nlogn) n is max(n1, n2)
+//space O(1)
 public class Solution {
     public int[] intersect(int[] nums1, int[] nums2) {
         Arrays.sort(nums1);
@@ -14,6 +17,93 @@ public class Solution {
         }
         int[] arr = new int[res.size()];
         for(int k = 0; k < res.size(); ++k) arr[k] = res.get(k);
+        return arr;
+    }
+}
+
+//sort + HashMap +binary search
+class Solution {
+    public int[] intersect(int[] nums1, int[] nums2) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        if(nums1.length > nums2.length) {
+            return intersect(nums2, nums1);
+        }
+        Arrays.sort(nums2);
+        for(int num : nums2) {
+            if(!map.containsKey(num)) {
+                map.put(num, 0);
+            }
+            map.put(num, map.get(num) + 1);
+        }
+
+        List<Integer> res = new ArrayList<>();
+        for(int num : nums1) {
+            if(map.containsKey(num) && map.get(num) > 0) {
+                if(search(num, nums2)) {
+                    map.put(num, map.get(num) - 1);
+                    res.add(num);
+                }
+            }
+        }
+
+        int n = res.size();
+        int[] arr = new int[n];
+        for(int i = 0; i < n; i++) {
+            arr[i] = res.get(i);
+        }
+
+        return arr;
+    }
+
+    private boolean search(int target, int[] nums) {
+        if(nums.length == 0) {
+            return false;
+        }
+
+        int left = 0, right = nums.length - 1, mid = 0;
+        while(left + 1 < right) {
+            mid = left + (right - left) / 2;
+            if(nums[mid] == target) {
+                return true;
+            } else if(nums[mid] < target) {
+                left = mid;
+            } else {
+                right = mid;
+            }
+        }
+        if(nums[left] == target || nums[right] == target) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+//HashMap
+class Solution {
+    public int[] intersect(int[] nums1, int[] nums2) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for(int num : nums1) {
+            if(!map.containsKey(num)) {
+                map.put(num, 0);
+            }
+            map.put(num, map.get(num) + 1);
+        }
+
+        List<Integer> res = new ArrayList<>();
+        for(int num : nums2) {
+            if(map.containsKey(num) && map.get(num) > 0) {
+                map.put(num, map.get(num) - 1);
+                res.add(num);
+            }
+        }
+
+        int n = res.size();
+        int[] arr = new int[n];
+        for(int i = 0; i < n; i++) {
+            arr[i] = res.get(i);
+        }
+
         return arr;
     }
 }

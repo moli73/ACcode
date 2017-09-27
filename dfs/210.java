@@ -42,7 +42,9 @@ public class Solution {
         state[s] = 2;
         return true;
     }
-}public class Solution {
+}
+
+public class Solution {
     public int[] findOrder(int numCourses, int[][] prerequisites) {
         List<List<Integer>> graph = new ArrayList<>();
         for(int i = 0; i < numCourses; i++) {

@@ -14,3 +14,18 @@ public class Solution {
         return -res;
     }
 }
+//better code
+public class Solution {
+    int sum = 0, res = Integer.MAX_VALUE, maxPre = 0;
+        for(int num : nums) {
+            sum += num;
+            if(sum - maxPre < res) {
+                res = sum - maxPre;
+            }
+            if(sum > maxPre) {
+                sum = maxPre;
+            }
+        }
+        return res;
+    }
+}

@@ -1,5 +1,6 @@
 //sort and two pointers
 //time complexity is O(nlogn)
+//version1: 去重复取最后一个数
 public class Solution {
     public int[] intersection(int[] nums1, int[] nums2) {
         Arrays.sort(nums1);
@@ -25,7 +26,87 @@ public class Solution {
 //if use binary search, also need to sort one array first
 //since the sorted array is the first condition of the binary search
 
-//version 2:只将第一组相等的数输出，类似于backtracking去重的方法
+//hash map
+//time O(max(n1, n2)) n1, n2是nums1和nums2数组长度。
+//space O(max(n1, n2))
+class Solution {
+    public int[] intersection(int[] nums1, int[] nums2) {
+        HashSet<Integer> set = new HashSet<>();
+        for(int num : nums1) {
+            set.add(num);
+        }
+
+        List<Integer> res = new ArrayList<>();
+        for(int num : nums2) {
+            if(set.contains(num)) {
+                set.remove(num);//key point
+                res.add(num);
+            }
+        }
+
+        int n = res.size();
+        int[] arr = new int[n];
+        for(int i = 0; i < n; i++) {
+            arr[i] = res.get(i);
+        }
+
+        return arr;
+    }
+}
+
+//binary search and hash set
+//time O(nlogn)
+//space O(n)
+class Solution {
+    public int[] intersection(int[] nums1, int[] nums2) {
+
+        if(nums2.length < nums1.length) {
+            return intersection(nums2, nums1);
+        }
+
+        Arrays.sort(nums1);
+        HashSet<Integer> res = new HashSet<Integer>();
+
+        for(int num : nums2) {
+            if(!res.contains(num)) {
+                if(search(num, nums1)) {
+                    res.add(num);
+                }
+            }
+        }
+
+        int n = res.size();
+        int i = 0;
+        int[] arr = new int[n];
+        for(int num : res) {
+            arr[i++] = num;
+        }
+
+        return arr;
+    }
+
+    private boolean search(int target, int[] nums) {
+        if(nums.length == 0) return false;//key point
+        int left = 0, right = nums.length - 1, mid = 0;
+        while(left + 1 < right) {
+            mid = left + (right - left) / 2;
+            if(nums[mid] == target) {
+                return true;
+            } else if(nums[mid] < target) {
+                left = mid;
+            } else {
+                right = mid;
+            }
+        }
+        if(nums[left] == target || nums[right] == target) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+//version 2:去重复取第一个数，类似于backtracking去重的方法
 public class Solution {
     /**
      * @param nums1 an integer array
