@@ -7,6 +7,50 @@
  *     Interval(int s, int e) { start = s; end = e; }
  * }
  */
+class Solution {
+    public List<Interval> merge(List<Interval> intervals) {
+        if(intervals == null || intervals.size() == 0) {
+            return new ArrayList<Interval>();
+        }
+
+        Collections.sort(intervals, new Comparator<Interval>(){
+            public int compare(Interval a, Interval b) {
+                return a.start - b.start;
+            }
+        });
+
+        int start = intervals.get(0).start;
+        int end = intervals.get(0).end;
+        List<Interval> res = new ArrayList<Interval>();
+
+
+        for(Interval interval : intervals) {
+            if(interval.start > end) {
+                res.add(new Interval(start, end));
+                start = interval.start;
+                end = interval.end;
+            } else {
+                // start = Math.min(start, interval.start);//按照start排序的，所以start不用更新
+                end = Math.max(end, interval.end);
+            }
+        }
+
+        res.add(new Interval(start, end));
+
+        return res;
+    }
+}
+
+
+/**
+ * Definition for an interval.
+ * public class Interval {
+ *     int start;
+ *     int end;
+ *     Interval() { start = 0; end = 0; }
+ *     Interval(int s, int e) { start = s; end = e; }
+ * }
+ */
 
  //mock version:
 public class Solution {
@@ -31,6 +75,43 @@ public class Solution {
                 temp = new Interval(Integer.MAX_VALUE, Integer.MIN_VALUE);
             }
         }
+        return res;
+    }
+}
+
+/**
+ * Definition for an interval.
+ * public class Interval {
+ *     int start;
+ *     int end;
+ *     Interval() { start = 0; end = 0; }
+ *     Interval(int s, int e) { start = s; end = e; }
+ * }
+ */
+class Solution {
+    public List<Interval> merge(List<Interval> intervals) {
+        List<Interval> res = new ArrayList<>();
+        if(intervals.size() == 0) {
+            return res;
+        }
+        Collections.sort(intervals, new Comparator<Interval>(){
+            public int compare(Interval a, Interval b) {
+                return a.start - b.start;
+            }
+        });
+
+        Interval temp = null;
+        for(Interval interval : intervals) {
+            if(temp == null) {
+                temp = interval;
+            } else if(interval.start <= temp.end) {
+                    temp.end = Math.max(temp.end, interval.end);
+            } else {
+                res.add(new Interval(temp.start, temp.end));
+                temp = interval;
+            }
+        }
+        res.add(temp);
         return res;
     }
 }

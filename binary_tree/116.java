@@ -1,24 +1,33 @@
-/**
- * Definition for binary tree with next pointer.
- * public class TreeLinkNode {
- *     int val;
- *     TreeLinkNode left, right, next;
- *     TreeLinkNode(int x) { val = x; }
- * }
- */
+BFS:
+time: O(n)
+space: O(n)
 public class Solution {
     public void connect(TreeLinkNode root) {
+        if(root == null) {
+            return;
+        }
+
         Queue<TreeLinkNode> q = new LinkedList<TreeLinkNode>();
-        if(root == null) return;
+
         q.offer(root);
-        while(!q.isEmpty()){
+
+        while(!q.isEmpty()) {
             int size = q.size();
-            TreeLinkNode node = null;
-            for(int i = 0; i < size; ++i){
-                node = q.poll();
-                if(i != size - 1) node.next = q.peek();
-                if(node.left != null) q.offer(node.left);
-                if(node.right != null) q.offer(node.right);
+            TreeLinkNode pre = null;
+
+            for(int k = 0; k < size; k++) {
+
+                TreeLinkNode cur = q.poll();
+
+                if(pre != null) {
+
+                    pre.next = cur;
+
+                }
+                pre = cur;
+
+                if(cur.left != null) q.offer(cur.left);
+                if(cur.right != null) q.offer(cur.right);
             }
         }
     }
@@ -27,17 +36,43 @@ public class Solution {
 //constant space complexity
 public class Solution {
     public void connect(TreeLinkNode root) {
-        TreeLinkNode level_head = root;
-        while(level_head != null){
-            TreeLinkNode cur = level_head;
-            while(cur != null){
-                if(cur.left != null){
-                    cur.left.next = cur.right;
-                    if(cur.next != null) cur.right.next = cur.next.left;
+
+        TreeLinkNode cur = root;
+
+        while(cur != null) {
+            TreeLinkNode next = cur.left;//下一层起点
+
+            while(next != null && cur != null) {//是否有下一层
+
+                cur.left.next = cur.right;
+
+                if(cur.next != null) {//本层是否到最后了。
+
+                    cur.right.next = cur.next.left;
+
                 }
+
                 cur = cur.next;
             }
-            level_head = level_head.left;
+
+            cur = next;
         }
+    }
+}
+
+public class Solution {
+    public void connect(TreeLinkNode root) {
+        if(root == null) return;
+
+        if(root.left != null) {
+            root.left.next = root.right;
+
+            if(root.next != null) {
+                root.right.next = root.next.left;
+            }
+        }
+
+        connect(root.left);
+        connect(root.right);
     }
 }

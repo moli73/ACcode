@@ -2,7 +2,6 @@
 class Solution {
     public String minWindow(String s, String t) {
         Map<Character, Integer> map = new HashMap<>();
-        int count = t.length();
         for(int i = 0; i < t.length(); i++) {
             char c = t.charAt(i);
             if(!map.containsKey(c)) {
@@ -10,32 +9,66 @@ class Solution {
             }
             map.put(c, map.get(c) + 1);
         }
-
-        int start = 0, len = s.length() + 1;
-        int i = 0, j = 0;
-        for(i = 0, j = 0; j < s.length(); j++) {
-            char c = s.charAt(j);
-            if(!map.containsKey(c)) {
-                map.put(c, 0);
+        int count = t.length();
+        int start = 0;
+        int head = 0;
+        int len = 0;
+        for(int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if(map.containsKey(c)) {
+                if(map.get(c) > 0) {
+                    count--;
+                }
+                map.put(c, map.get(c) - 1);
             }
-            if(map.get(c) > 0) {
-                count--;
-            }
-            map.put(c, map.get(c) - 1);
             while(count == 0) {
-                if(j - i + 1 < len) {
-                    start = i;
-                    len = j - i + 1;
+                if(len == 0 || i - start + 1 < len) {
+                    len = i - start + 1;
+                    head = start;
                 }
-                char temp = s.charAt(i);
-                map.put(temp, map.get(temp) + 1);
-                if(map.get(temp) > 0) {
-                    count++;
+                if(map.containsKey(s.charAt(start))) {
+                    map.put(s.charAt(start), map.get(s.charAt(start)) + 1);
+                    if(map.get(s.charAt(start)) > 0) {
+                        count++;
+                    }
                 }
-                i++;
+                start++;
             }
         }
-        return len == s.length() + 1 ? new String() : s.substring(start, start + len);
+        return s.substring(head, head + len);
+    }
+}
+//char array version
+class Solution {
+    public String minWindow(String s, String t) {
+        int[] map = new int[256];
+        for(int i = 0; i < t.length(); i++) {
+            map[t.charAt(i)]++;
+        }
+
+        int count = t.length();
+        int start = 0;
+        int head = 0;
+        int len = 0;
+
+        for(int i = 0; i < s.length(); i++) {
+            if(map[s.charAt(i)] > 0) {
+                count--;
+            }
+            map[s.charAt(i)]--;
+            while(count == 0) {
+                if(len == 0 || len > i - start + 1) {
+                    head = start;
+                    len = i - start + 1;
+                }
+                map[s.charAt(start)]++;
+                if(map[s.charAt(start)] > 0) {
+                    count++;
+                }
+                start++;
+            }
+        }
+        return s.substring(head, head + len);
     }
 }
 

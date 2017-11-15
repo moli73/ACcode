@@ -26,9 +26,9 @@ public class Solution {
 
         for(int i = pos; i < comb.length(); i++) {
             if(comb.charAt(i) != '(' && comb.charAt(i) != ')') continue;
-            if(i != pos && comb.charAt(i) == comb.charAt(i - 1)) continue;
+            if(i != pos && comb.charAt(i) == comb.charAt(i - 1)) continue;//1.避免重复
             char temp = comb.charAt(i);
-            helper(res, comb.deleteCharAt(i), i);
+            helper(res, comb.deleteCharAt(i), i);//2.非常关键的是pos的值还是i
             comb.insert(i, temp);
         }
     }

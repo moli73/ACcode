@@ -1,31 +1,70 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
-public class Solution {
+DFS, traversal, backtracking
+class Solution {
     public List<String> binaryTreePaths(TreeNode root) {
         List<String> res = new ArrayList<String>();
-        // String path = new String();
-        // helper(root, res, path);
-        helper(root, res, "");
+
+        helper(res, new String(), root);
+
         return res;
     }
 
-    public void helper(TreeNode root, List<String> res, String path){
-        if(root == null) return;
-        if(root.left == null && root.right == null){
-            // path += root.val;
-            // res.add(path);
-            res.add(path + root.val);
+    private void helper(List<String> res, String path, TreeNode root) {
+        if(root == null) {
+            return;
         }
-        else{
-            helper(root.left, res, path + root.val + "->");
-            helper(root.right, res, path + root.val + "->");
+
+        if(root.left == null && root.right == null) {
+            res.add(path + String.valueOf(root.val));
+            return;
         }
+
+        if(root.left != null) {
+            helper(res, path + String.valueOf(root.val) + "->", root.left);
+        }
+
+        if(root.right != null) {
+            helper(res, path + String.valueOf(root.val) + "->", root.right);
+        }
+    }
+}
+
+BFS
+class Solution {
+    public List<String> binaryTreePaths(TreeNode root) {
+        List<String> res = new ArrayList<>();
+        if(root == null) {
+            return res;
+        }
+
+        Queue<TreeNode> qNode = new LinkedList<>();
+        Queue<StringBuilder> qPath = new LinkedList<>();
+        StringBuilder sb = new StringBuilder(String.valueOf(root.val));
+        qNode.offer(root);
+        qPath.offer(sb);
+
+        while(!qNode.isEmpty()) {
+            TreeNode cur = qNode.poll();
+            StringBuilder path = qPath.poll();
+
+            if(cur.left == null && cur.right == null) {
+                res.add(path.toString());
+            } else {
+                if(cur.left != null) {
+                    qNode.offer(cur.left);
+
+                    StringBuilder leftPath = new StringBuilder(path);
+                    leftPath.append("->" + String.valueOf(cur.left.val));
+                    qPath.offer(leftPath);
+                }
+                if(cur.right != null) {
+                    qNode.offer(cur.right);
+
+                    StringBuilder rightPath = new StringBuilder(path);
+                    rightPath.append("->" + String.valueOf(cur.right.val));
+                    qPath.offer(rightPath);
+                }
+            }
+        }
+        return res;
     }
 }

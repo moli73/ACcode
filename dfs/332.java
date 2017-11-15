@@ -58,7 +58,7 @@ public class Solution {
         }
 
         List<String> res = new ArrayList<>();
-        Stack<String> stack = new Stack<>();
+        Stack<String> stack = new Sta3ck<>();
         stack.add("JFK");//use the stack to do DFS
 
         while(!stack.empty()) {

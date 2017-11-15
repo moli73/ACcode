@@ -1,43 +1,26 @@
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode(int x) {
- *         val = x;
- *         next = null;
- *     }
- * }
- */
 public class Solution {
     public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
-        ListNode cur1 = headA, cur2 = headB;
-        while(cur1 != null && cur2 != null) {
-            if(cur1 == cur2) return cur1;
-            cur1 = cur1.next;
-            cur2 = cur2.next;
-            if(cur1 == null && cur2 == null) return null;
-            if(cur1 == null) cur1 = headB;
-            if(cur2 == null) cur2 = headA;
+        if(headA == null || headB == null) {  1.如果某list为null，则无交点
+            return null;
         }
-        return null;
+
+        ListNode p1 = headA;
+        ListNode p2 = headB;
+
+        while(p1 != p2) {       case : [1], [1] 2.一开始就相交，两个list相同
+            p1 = p1.next;
+            p2 = p2.next;
+            if(p1 == p2) {  先判断是否相同，再跳点。有可能同时到达null case: [1,2], [3]
+                break;       两个list没有交点
+            }
+            if(p1 == null) {
+                p1 = headB;
+            }
+            if(p2 == null) {
+                p2 = headA;
+            }
+        }
+
+        return p1;
     }
-}
-
-//better code
-public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
-    //boundary check
-    if(headA == null || headB == null) return null;
-
-    ListNode a = headA;
-    ListNode b = headB;
-
-    //if a & b have different len, then we will stop the loop after second iteration
-    while( a != b){
-    	//for the end of first iteration, we just reset the pointer to the head of another linkedlist
-        a = a == null? headB : a.next;
-        b = b == null? headA : b.next;
-    }
-
-    return a;
 }

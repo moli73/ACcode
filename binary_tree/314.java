@@ -1,12 +1,64 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
+//BFS solution with two pass
+class Solution {
+    class Item {
+        TreeNode node;
+        int index;
+        public Item(TreeNode node, int index) {
+            this.node = node;
+            this.index = index;
+        }
+    }
+    public List<List<Integer>> verticalOrder(TreeNode root) {
+        helper(root, 0);
+        List<List<Integer>> res  = new ArrayList<>();
+        if(root == null) {
+            return res;
+        }
+        for(int i = 0; i < -leftBound; i++) {
+            res.add(new ArrayList<Integer>());
+        }
+
+        Queue<Item> q = new LinkedList<>();
+        q.offer(new Item(root, -leftBound));
+
+        while(!q.isEmpty()) {
+            Item cur = q.poll();
+            if(cur.index == res.size()) {
+                res.add(new ArrayList<Integer>());
+            }
+            res.get(cur.index).add(cur.node.val);
+            if(cur.node.left != null) {
+                q.offer(new Item(cur.node.left, cur.index - 1));
+            }
+            if(cur.node.right != null) {
+                q.offer(new Item(cur.node.right, cur.index + 1));
+            }
+        }
+        return res;
+    }
+
+
+
+    private void helper(TreeNode root, int index) {
+        if(root == null) {
+            return;
+        }
+        if(leftBound > index) {
+            leftBound = index;
+        }
+        helper(root.left, index - 1);
+        helper(root.right, index + 1);
+    }
+
+    private int leftBound = 0;
+}
+
+
+
+
+
+
+//naive solution 
 class Solution {
     private List<List<Integer>> left = new ArrayList<>();
     private List<List<Integer>> right = new ArrayList<>();//因为id肯定连续，如果用map做，可以直接存min，max，然后一次扫。不用key sorted

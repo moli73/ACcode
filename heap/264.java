@@ -1,3 +1,37 @@
+solution 2:
+感觉有点像heapfy，三个都计算出一个代表数字，选择最小的一个进行变化。
+time: O(n)
+space: O(n)
+class Solution {
+    public int nthUglyNumber(int n) {
+        List<Integer> res = new ArrayList<>();
+        res.add(1);
+        int p2 = 0;
+        int p3 = 0;
+        int p5 = 0;
+        while(res.size() < n) {
+            int num = Math.min(res.get(p2) * 2, Math.min(res.get(p3) * 3, res.get(p5) * 5));
+            res.add(num);
+            if(res.get(p2) * 2 == num) {
+                p2++;
+            }
+            if(res.get(p3) * 3 == num) {
+                p3++;
+            }
+            if(res.get(p5) * 5 == num) {
+                p5++;
+            }
+        }
+        return res.get(n - 1);
+    }
+}
+
+solution 1: priority queue + hashset
+time: O(nlogn) worst case
+space: O(n)
+1.用set判断完是否contains后，一点要记得remove或者add
+2.数字的越界,问题 Integer.MAX_VALUE / cur >= 2 注意要取等于
+或者用long解决
 //version 1 : use heap + HashSet
 public class Solution {
     public int nthUglyNumber(int n) {
@@ -23,36 +57,39 @@ public class Solution {
         return (int)res;
     }
 }
-
-//version 2: jiuzhang Solution
-public class Solution {
+不用Long
+class Solution {
     public int nthUglyNumber(int n) {
-        List<Integer> nums = new ArrayList<>();
-        nums.add(1);
-        int p2 = 0, p3 = 0, p5 = 0;
-        for(int i = 1; i < n; i++) {
-            int lastNum = nums.get(i - 1);
-            while(nums.get(p2) * 2 <= lastNum) p2++;
-            while(nums.get(p3) * 3 <= lastNum) p3++;
-            while(nums.get(p5) * 5 <= lastNum) p5++;
-            nums.add(Math.min(nums.get(p2) * 2, Math.min(nums.get(p3) * 3, nums.get(p5) * 5)));//先移动，后计算。
-        }
-        return nums.get(n - 1);
-    }
-}
+        Set<Integer> set = new HashSet<Integer>();
+        Queue<Integer> pq = new PriorityQueue<Integer>(11, new Comparator<Integer>() {
+            public int compare(Integer a, Integer b) {
+                return (int)a - b;
+            }
+        });
 
-public class Solution {
-    public int nthUglyNumber(int n) {
-        List<Integer> nums = new ArrayList<>();
-        nums.add(1);
-        int p2 = 0, p3 = 0, p5 = 0;
-        for(int i = 1; i < n; i++) {
-            nums.add(Math.min(nums.get(p2) * 2, Math.min(nums.get(p3) * 3, nums.get(p5) * 5)));//先计算，后移动。
-            int min = nums.get(i);
-            if(min == nums.get(p2) * 2) p2++;
-            if(min == nums.get(p3) * 3) p3++;
-            if(min == nums.get(p5) * 5) p5++;
+        pq.offer(1);
+        int cur = 0;
+
+        while(n > 0) {
+            cur = pq.poll();
+            n--;
+
+            if(Integer.MAX_VALUE / cur >= 2 && !set.contains(2 * cur)) {
+                set.add(2 * cur);
+                pq.offer(2 * cur);
+            }
+
+            if(Integer.MAX_VALUE / cur >= 3 && !set.contains(3 * cur)) {
+                set.add(3 * cur);
+                pq.offer(3 * cur);
+            }
+
+            if(Integer.MAX_VALUE / cur >= 5 && !set.contains(5 * cur)) {
+                set.add(5 * cur);
+                pq.offer(5 * cur);
+            }
         }
-        return nums.get(n - 1);
+
+        return cur;
     }
 }

@@ -1,3 +1,32 @@
+//second time
+class Solution {
+    public int kthSmallest(int[][] matrix, int k) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        Queue<int[]> pq = new PriorityQueue<int[]>(m, new Comparator<int[]>(){
+            public int compare(int[] a, int[] b) {
+                return a[0] - b[0];
+            }
+        });
+
+        for(int i = 0; i < m; i++) {
+            pq.offer(new int[] {matrix[i][0], i, 0});
+        }
+        
+        for(int i = 0; i < k - 1; i++) {
+            int[] item = pq.poll();
+            int x = item[1];
+            int y = item[2] + 1;
+            if(y < n) {
+                pq.offer(new int[] {matrix[x][y], x, y});
+            }
+        }
+        int[] item = pq.poll();
+        return item[0];
+    }
+}
+
+//jiuzhang version
 public class Solution {
     class Item {
         int i;

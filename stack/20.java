@@ -16,7 +16,7 @@ class Solution {
                 }
             }
         }
-        return stack.empty();
+        return stack.empty(); 关键最后判断stack是否为空
     }
 }
 

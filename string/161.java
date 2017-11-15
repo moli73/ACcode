@@ -38,6 +38,54 @@ class Solution {
     }
 }
 
+class Solution {
+    public boolean isOneEditDistance(String s, String t) {
+        if(s.equals(t)) {
+            return false;
+        }
+        int m = s.length();
+        int n = t.length();
+
+        if(m > n) {//保证s是长度小的一个
+            return isOneEditDistance(t, s);
+        }
+
+        if(n - m > 1) {
+            return false;
+        }
+
+        int i = 0;
+        for(i = 0; i < m; i++) {
+            if(s.charAt(i) != t.charAt(i)) {
+                break;
+            }
+        }
+
+        if(i == m) {
+            return n - m == 1;
+        }
+
+        int j = i;
+        if(m != n) {//
+            j++;
+        } else {
+            i++;
+            j++;
+        }
+
+        while(i < m) {
+            if(s.charAt(i) != t.charAt(j)) {
+                return false;
+            } else {
+                i++;
+                j++;
+            }
+        }
+
+        return true;
+    }
+}
+
 //time O(n)
 //space O(n)
 class Solution {
@@ -54,5 +102,35 @@ class Solution {
             }
         }
         return false;
+    }
+}
+
+
+class Solution {
+    public boolean isOneEditDistance(String s, String t) {
+        if(s.equals(t)) {
+            return false;
+        }
+        int m = s.length();
+        int n = t.length();
+
+        if(m > n) {//保证s是长度小的一个
+            return isOneEditDistance(t, s);
+        }
+
+        if(n - m > 1) {
+            return false;
+        }
+
+        int i = 0;
+        for(i = 0; i < m; i++) {
+            if(s.charAt(i) != t.charAt(i)) {
+                return s.substring(i + 1, m).equals(t.substring(i + 1, n)) ||
+                    s.substring(i, m).equals(t.substring(i + 1, n)) ||
+                    s.substring(i + 1, m).equals(t.substring(i, n));
+            }
+        }
+
+        return n - m == 1;
     }
 }

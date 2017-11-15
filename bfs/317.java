@@ -7,13 +7,13 @@ public class Solution {
         }
 
         int total = 0, m = grid.length, n = grid[0].length;
-        int[][] distance = new int[m][n];
-        int[][] count = new int[m][n];
+        int[][] distance = new int[m][n];//记录每个空格到每个house的距离累加和
+        int[][] count = new int[m][n];//记录每个空格能够到达的house数量
 
         for(int i = 0; i < m; i++) {
             for(int j = 0; j < n; j++) {
                 if(grid[i][j] == 1) {
-                    total++;
+                    total++;//记录house的个数
                     bfs(grid, new Point(i, j), distance, count);
                 }
             }
@@ -38,7 +38,7 @@ public class Solution {
     public void bfs(int[][] grid, Point s, int[][] distance, int[][] count) {
         int[] delta = {1, 0, -1, 0, 1};
         int m = grid.length, n = grid[0].length;
-        int[][] level = new int[m][n];
+        int[][] level = new int[m][n];//记录shortest距离，同时充当visited数组的功能
         Queue<Point> q = new LinkedList<>();
 
         q.offer(s);
@@ -127,3 +127,75 @@ public class Solution {
         }
     }
 }
+
+
+class Solution {
+    public int shortestDistance(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        int[][] res = new int[m][n];
+        int[][] count = new int[m][n];
+
+        int house = 0;
+
+        int[] delta = {1,0,-1,0,1};
+
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(grid[i][j] == 1) {
+                    house++;//count total number of house
+                    boolean[][] visited = new boolean[m][n];
+
+                    Queue<int[]> q = new LinkedList<>();
+                    q.offer(new int[] {i, j});
+                    // visited[i][j] = true;
+                    int d = 0;
+
+                    while(!q.isEmpty()) {
+                        int size = q.size();
+                        d++;
+                        for(int k = 0; k < size; k++) {
+                            int[] cur = q.poll();
+                            for(int t = 0; t < 4; t++) {
+                                int x = cur[0] + delta[t];
+                                int y = cur[1] + delta[t + 1];
+                                if(x < 0 || x >= m || y < 0 || y >= n) continue;
+                                if(visited[x][y]) continue;
+                                if(grid[x][y] != 0) continue;
+
+                                visited[x][y] = true;
+                                res[x][y] += d;//accumulate distance
+                                count[x][y]++;//add one house
+                                q.offer(new int[] {x, y});
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        int min = Integer.MAX_VALUE;
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(grid[i][j] == 0 && count[i][j] == house) {
+                    min = Math.min(res[i][j], min);
+                }
+            }
+        }
+
+        return min == Integer.MAX_VALUE ? -1 : min;
+
+    }
+}
+
+/*
+step1:bfs all building to all empty position distance
+每个building，建立一个temp matrix，记录距离。第一次bfs到的cell就累加对应路径的res matrix，同时建立一个count matrix,记录是否所有building都能够到达这个cell
+
+step2:accumulate the empty position to all building's distance
+
+step3:traverse all to find the minimum total distance
+
+
+
+*/

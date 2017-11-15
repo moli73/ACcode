@@ -1,20 +1,48 @@
-/**
- * // This is the interface that allows for creating nested lists.
- * // You should not implement it, or speculate about its implementation
- * public interface NestedInteger {
- *
- *     // @return true if this NestedInteger holds a single integer, rather than a nested list.
- *     public boolean isInteger();
- *
- *     // @return the single integer that this NestedInteger holds, if it holds a single integer
- *     // Return null if this NestedInteger holds a nested list
- *     public Integer getInteger();
- *
- *     // @return the nested list that this NestedInteger holds, if it holds a nested list
- *     // Return null if this NestedInteger holds a single integer
- *     public List<NestedInteger> getList();
- * }
- */
+corner case:
+input: [[]]
+一定要check empty，在使用peek等method之前
+
+注意：本题每次都先hasNext再next
+
+solution1: one stack
+每次list从后往前加入，这样出栈能保证是正序；
+每次取出栈顶进行expand，知道栈顶为integer或者空
+public class NestedIterator implements Iterator<Integer> {
+    private Stack<NestedInteger> stack;
+
+    public NestedIterator(List<NestedInteger> nestedList) {
+        stack = new Stack<>();
+
+        for(int i = nestedList.size() - 1; i >= 0; i--) {
+            stack.push(nestedList.get(i));
+        }
+    }
+
+    @Override
+    public Integer next() {
+        return stack.pop().getInteger();
+    }
+
+    @Override
+    public boolean hasNext() {
+
+        while(!stack.empty() && !stack.peek().isInteger()) {
+            NestedInteger temp = stack.pop();
+
+            if(temp.isInteger()) {
+                stack.push(temp);
+            } else {
+                List<NestedInteger> list = temp.getList();
+                for(int i = list.size() - 1; i >= 0; i--) {
+                    stack.push(list.get(i));//case : [[]]，pop完了之后，可能不加入，是的stack empty
+                }
+            }
+        }
+        return !stack.empty();//最后用是否empty作为check依据
+    }
+}
+
+two stack方式，完成顺序pop
 public class NestedIterator implements Iterator<Integer> {
     private Stack<NestedInteger> s1 = new Stack<>();
     private Stack<NestedInteger> s2 = new Stack<>();
@@ -45,9 +73,3 @@ public class NestedIterator implements Iterator<Integer> {
         return !s2.empty();
     }
 }
-
-/**
- * Your NestedIterator object will be instantiated and called as such:
- * NestedIterator i = new NestedIterator(nestedList);
- * while (i.hasNext()) v[f()] = i.next();
- */

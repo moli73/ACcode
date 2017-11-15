@@ -11,35 +11,35 @@ class Solution {
         if(head == null) {
             return;
         }
-        ListNode pre = head, slow = head, fast = head;
-        while(fast != null) {
-            pre = slow;
-            slow = slow.next;
+        ListNode fast = head;
+        ListNode slow = head;
 
-            fast = fast.next;
-            if(fast != null) {
-                fast = fast.next;
-            }
+        while(fast != null && fast.next != null) {   找中点模版
+            fast = fast.next.next;
+            slow = slow.next;
         }
-        pre.next = null;
 
         ListNode dummy = new ListNode(0);
-        while(slow != null) {
+        while(slow != null) {                       1->2->3<-4<-5    1->2->3<-4
             ListNode next = slow.next;
+
             slow.next = dummy.next;
             dummy.next = slow;
+
             slow = next;
         }
 
-        pre = head;
-        ListNode cur = dummy.next;
-        while(cur != null) {
-            ListNode next = cur.next;
-            cur.next = pre.next;
-            pre.next = cur;
-            cur = next;
 
-            pre = pre.next.next;
+        ListNode p1 = head;                insert后一半到前一半
+        ListNode p2 = dummy.next;           奇数个，相等退出。偶数个，next相等退出。
+
+        while(p1 != p2 && p1.next != p2) {   终止条件tricky需要举例子思考
+            ListNode next = p2.next;
+            p2.next = p1.next;
+            p1.next = p2;
+
+            p1 = p1.next.next;
+            p2 = next;
         }
     }
 }

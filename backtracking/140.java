@@ -41,7 +41,7 @@ public class Solution {
                 isWord[i][j] = words.contains(s.substring(i, j + 1));
             }
         }
-
+        //isPossible表示从i位置到最后的字符串是否能break，起到辅助优化的作用。
         boolean[] isPossible = new boolean[n];
         for(int i = n - 1; i >= 0; --i){
             isPossible[i] = isWord[i][n - 1];

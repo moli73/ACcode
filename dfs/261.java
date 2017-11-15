@@ -1,6 +1,6 @@
 public class Solution {
     public boolean validTree(int n, int[][] edges) {
-        if(edges.length != n - 1) {
+        if(edges.length != n - 1) {//边数一定是node数减1，所以从一个点（任意选为0）开始，遍历完所有边，检测是否多优点都遍历过
             return false;
         }
 
@@ -18,7 +18,7 @@ public class Solution {
         int[] state = new int[n];
         helper(state, 0, graph);
 
-        for(int cur : state) {
+        for(int cur : state) {//检测是否所有node被遍历过
             if(cur == 0) {
                 return false;
             }

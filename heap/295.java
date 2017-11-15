@@ -1,3 +1,48 @@
+最优解：
+class MedianFinder {
+
+    private Queue<Integer> left;
+    private Queue<Integer> right;
+    /** initialize your data structure here. */
+    public MedianFinder() {
+        right = new PriorityQueue<>();
+        left = new PriorityQueue<>(11, new Comparator<Integer>(){
+            public int compare(Integer a, Integer b) {
+                return b - a;
+            }
+        });
+    }
+
+    public void addNum(int num) {
+        if(left.size() == 0 || num <= left.peek()) {    注意刚开始的时候，size == 0 check；每次add number，和left.peek() 比较大小
+            left.offer(num);
+        } else {
+            right.offer(num);
+        }
+
+        if(left.size() < right.size()) {
+            left.offer(right.poll());
+        } else if(left.size() > right.size() + 1) {
+            right.offer(left.poll());
+        }
+    }
+
+    public double findMedian() {
+        if(left.size() == right.size()) {
+            return ((double)left.peek() + (double)right.peek()) / 2;
+        } else {
+            return (double)left.peek();
+        }
+    }
+}
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder obj = new MedianFinder();
+ * obj.addNum(num);
+ * double param_2 = obj.findMedian();
+ */
+
 public class MedianFinder {
     private Integer median = null;
     private Queue<Integer> left;
@@ -50,7 +95,7 @@ public class MedianFinder {
  * double param_2 = obj.findMedian();
  */
 
- 
+
 //mock version
 public class MedianFinder {
     private Queue<Integer> left;

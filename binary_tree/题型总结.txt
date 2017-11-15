@@ -198,6 +198,8 @@ public class Solution {
 
 #116，类似linked list题目，充分利用next，和满树的条件。（若不考虑空间，可用BFS），参考程序。
 #117，利用一个dummy节点做每一层过度，十分巧妙，看程序。
+本质是利用dummy node做一个node append，只不过每次append前，check一下要append的node是否存在
+同时，每层的起点不一定是cur.left了，应该是dummy.next
 
 #156，upsideDownBinaryTree，注意题目前提，充分限定了树的形状。所以题目，其实是一个类似linked list的题目。利用pre，cur，next，temp，存储节点，完成。
 

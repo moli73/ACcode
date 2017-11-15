@@ -17,3 +17,24 @@ public class Solution {
         return res;
     }
 }
+
+
+class Solution {
+    public int maxSubArrayLen(int[] nums, int k) {
+        int len = 0;
+        int sum = 0;
+        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+        map.put(0, - 1);//tricky initialization
+        for(int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+            if(map.containsKey(sum - k)) {
+                len = Math.max(len, i - map.get(sum - k));
+            }
+
+            if(!map.containsKey(sum)) {
+                map.put(sum, i);
+            }
+        }
+        return len;
+    }
+}

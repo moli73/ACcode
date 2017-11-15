@@ -1,10 +1,8 @@
 //version 1: DFS
-public class Solution {
+class Solution {
     private int count = 0;
+
     public int numIslands(char[][] grid) {
-        if(grid.length == 0 || grid[0].length == 0) {
-            return 0;
-        }
         for(int i = 0; i < grid.length; i++) {
             for(int j = 0; j < grid[0].length; j++) {
                 if(grid[i][j] == '1') {
@@ -16,52 +14,107 @@ public class Solution {
         return count;
     }
 
-    public void helper(char[][] grid, int i, int j) {
-        if(i < 0 || i >= grid.length || j < 0 || j >= grid[0].length || grid[i][j] == '0') {
-            return;
-        }
-        grid[i][j] = '0';
-        helper(grid, i - 1, j);
-        helper(grid, i + 1, j);
-        helper(grid, i, j - 1);
-        helper(grid, i, j + 1);
+    private int[] dx = {0,0,1,-1};
+    private int[] dy = {1,-1,0,0};
 
+    private void helper(char[][] grid, int i, int j) {
+        if(i < 0 || i >= grid.length || j < 0 || j >= grid[0].length || grid[i][j] != '1') return;
+        grid[i][j] = '0';//在此处set 0
+        for(int k = 0; k < 4; k++) {
+            helper(grid, i + dx[k], j + dy[k]);
+        }
     }
 }
-//version 2: BFS
+//DFS iteration
 class Solution {
     public int numIslands(char[][] grid) {
-        if(grid.length == 0 || grid[0].length == 0) {
+        if(grid == null || grid.length == 0 || grid[0].length == 0) {
             return 0;
         }
 
-        int[] d = {-1, 0, 1, 0, -1};
-
+        int m = grid.length;
+        int n = grid[0].length;
         int count = 0;
-        Queue<int[]> q = new LinkedList<>();
 
-        for(int i = 0; i < grid.length; i++) {
-            for(int j = 0; j < grid[0].length; j++) {
+        int[] dx = {0,0,1,-1};
+        int[] dy = {1,-1,0,0};
+
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
                 if(grid[i][j] == '1') {
+
                     count++;
-                    q.offer(new int[] {i, j});
-                    grid[i][j] = '0';
-                    while(!q.isEmpty()) {
-                        int[] cur = q.poll();
+
+                    Stack<int[]> stack = new Stack<int[]>();
+                    grid[i][j] = '0';//在此处set 0
+                    stack.push(new int[] {i, j});
+
+                    while(!stack.empty()) {
+
+                        int[] cur = stack.pop();
 
                         for(int k = 0; k < 4; k++) {
-                            int x = cur[0] + d[k];
-                            int y = cur[1] + d[k + 1];
-                            if(x < 0 || x >= grid.length || y < 0 || y >= grid[0].length || grid[x][y] == '0') {
-                                continue;
-                            }
-                            grid[x][y] = '0';
-                            q.offer(new int[] {x, y});
+
+                            int x = cur[0] + dx[k];
+                            int y = cur[1] + dy[k];
+
+                            if(x < 0 || x >= m || y < 0 || y >= n || grid[x][y] != '1') continue;
+
+                            grid[x][y] = '0';//在此处set 0
+                            stack.push(new int[] {x, y});
+
                         }
                     }
                 }
             }
         }
+        return count;
+    }
+}
+//version 2: BFS
+class Solution {
+    public int numIslands(char[][] grid) {
+        if(grid == null || grid.length == 0 || grid[0].length == 0) {
+            return 0;
+        }
+
+        int m = grid.length;
+        int n = grid[0].length;
+        int count = 0;
+
+        int[] dx = {0,0,1,-1};
+        int[] dy = {1,-1,0,0};
+
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(grid[i][j] == '1') {
+
+                    count++;
+
+                    Queue<int[]> q = new LinkedList<>();
+                    grid[i][j] = '0';//在此处set 0
+                    q.offer(new int[] {i, j});
+
+                    while(!q.isEmpty()) {
+
+                        int[] cur = q.poll();
+
+                        for(int k = 0; k < 4; k++) {
+
+                            int x = cur[0] + dx[k];
+                            int y = cur[1] + dy[k];
+
+                            if(x < 0 || x >= m || y < 0 || y >= n || grid[x][y] != '1') continue;
+
+                            grid[x][y] = '0';//在此处set 0
+                            q.offer(new int[] {x, y});
+
+                        }
+                    }
+                }
+            }
+        }
+
         return count;
     }
 }

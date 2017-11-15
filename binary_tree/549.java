@@ -1,12 +1,4 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
+上升下降都行，那就记录升序个数，和降序的个数。
 public class Solution {
     int res;
     public int longestConsecutive(TreeNode root) {

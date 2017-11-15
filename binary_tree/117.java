@@ -8,6 +8,33 @@
  */
 public class Solution {
     public void connect(TreeLinkNode root) {
+        TreeLinkNode cur = root;
+
+        while(cur != null) {
+            TreeLinkNode dummy = new TreeLinkNode(0);//用于指向下一行的开头
+            TreeLinkNode pre = dummy;
+
+            while(cur != null) {//不需要检查下一层是否为null，连接方式跟116已经不相同了
+
+                if(cur.left != null) {
+                    pre.next = cur.left;
+                    pre = pre.next;
+                }
+
+                if(cur.right != null) {
+                    pre.next = cur.right;
+                    pre = pre.next;
+                }
+
+                cur = cur.next;
+            }
+            cur = dummy.next;
+        }
+    }
+}
+
+public class Solution {
+    public void connect(TreeLinkNode root) {
         TreeLinkNode head = root;
         TreeLinkNode head_next = null;
         while(head != null){

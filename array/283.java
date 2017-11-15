@@ -1,35 +1,40 @@
-public class Solution {
-    private void swap(int i, int j, int[] nums) {
-        int temp = nums[i];
-        nums[i] = nums[j];
-        nums[j] = temp;
-    }
+//swap Solution
+//time: O(n)
+//space: O(1)
+//operation swap is number of non-zero numbers
+//worst case is all numbers is non-zero when the operation is also n
+class Solution {
     public void moveZeroes(int[] nums) {
-        int i = 0, j = 0;
-        for(j = 0; j < nums.length; j++) {
-            while(i < j && nums[i] != 0) {
-                i++;
-            }
-            if(i < j && nums[j] != 0) {
-                swap(i, j, nums);
+        int start = 0;
+        for(int i = 0; i < nums.length; i++) {
+            if(nums[i] != 0) {
+                swap(nums, i, start++);
             }
         }
     }
-}
 
-//better code
-public class Solution {
-    private void swap(int i, int j, int[] nums) {
+    private void swap(int[] nums, int i, int j) {
         int temp = nums[i];
         nums[i] = nums[j];
         nums[j] = temp;
     }
-    public void moveZeroes(int[] nums) {
+}
 
-        for(int i = 0, j = 0; j < nums.length; j++) {
-            if(nums[j] != 0) {
-                swap(i++, j, nums);
+
+//assign solution:
+//time: O(n)
+//space: O(1)
+//number of operation is n
+class Solution {
+    public void moveZeroes(int[] nums) {
+        int start = 0;
+        for(int i = 0; i < nums.length; i++) {
+            if(nums[i] != 0) {
+                nums[start++] = nums[i];
             }
+        }
+        while(start < nums.length) {
+            nums[start++] = 0;
         }
     }
 }

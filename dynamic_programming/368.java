@@ -25,13 +25,22 @@ public class Solution {
             }
         }
         //print the best solution
-        List<Integer> res = new ArrayList<Integer>();
-        int index = maxIndex;
-        res.add(nums[index]);
-        for(int i = 1; i < dp[maxIndex]; i++) {
-            index = pre[index];
-            res.add(nums[index]);
+        // List<Integer> res = new ArrayList<Integer>();
+        // int index = maxIndex;
+        // res.add(nums[index]);
+        // for(int i = 1; i < dp[maxIndex]; i++) {
+        //     index = pre[index];
+        //     res.add(nums[index]);
+        // }
+
+
+        List<Integer> res = new ArrayList<>();
+        int cur = maxIndex;
+        while(cur != path[cur]) {
+            res.add(nums[cur]);
+            cur = path[cur];
         }
+        res.add(nums[cur]);
 
         return res;
     }

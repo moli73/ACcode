@@ -54,27 +54,36 @@ public class Codec {
 
     // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
-        if(root == null) return "X,";
-        String left = serialize(root.left);
-        String right = serialize(root.right);
-        return root.val + "," + left + right;
+        StringBuilder sb = new StringBuilder();
+        helper(sb, root);
+        return sb.toString();
+    }
+    private void helper(StringBuilder sb, TreeNode root) {
+        if(root == null) {
+            sb.append("#,");
+        } else {
+            sb.append(String.valueOf(root.val)).append(",");
+            helper(sb, root.left);
+            helper(sb, root.right);
+        }
     }
 
+    private int pos = 0;
     // Decodes your encoded data to tree.
     public TreeNode deserialize(String data) {
-        String[] nodes = data.split(",");
-        int[] index = new int[1];
-        return deserialize(index, nodes);
+        String[] arr = data.split(",");
+        return helper(arr);
     }
-    public TreeNode deserialize(int[] index, String[] nodes){
-        if(index[0] >= nodes.length || nodes[index[0]].equals("X")){
-            index[0]++;
+
+    public TreeNode helper(String[] arr) {
+        if(pos >= arr.length || arr[pos].equals("#")) {
+            pos++;//空节点也要move forward
             return null;
         }
-        TreeNode root = new TreeNode(Integer.parseInt(nodes[index[0]]));
-        index[0]++;
-        root.left = deserialize(index, nodes);
-        root.right = deserialize(index, nodes);
+        TreeNode root = new TreeNode(Integer.parseInt(arr[pos]));
+        pos++;
+        root.left = helper(arr);
+        root.right = helper(arr);
         return root;
     }
 }
@@ -130,6 +139,62 @@ public class Codec {
 }
 
 
-// Your Codec object will be instantiated and called as such:
-// Codec codec = new Codec();
-// codec.deserialize(codec.serialize(root));
+
+/*
+      1
+   2     3
+  # #  4    5
+      # #  #  #
+string: 1, 2,3,#,#,4,5,#,#,#,#
+利用Queue
+*/
+public class Codec {
+
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        Queue<TreeNode> q = new LinkedList<TreeNode>();
+        StringBuilder sb = new StringBuilder();
+        q.offer(root);
+
+        while(!q.isEmpty()) {
+            TreeNode cur = q.poll();
+            if(cur == null) {
+                sb.append("#,");
+            } else {
+                sb.append(String.valueOf(cur.val)).append(",");
+                q.offer(cur.left);
+                q.offer(cur.right);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        String[] arr = data.split(",");
+        if(arr.length == 0 || arr[0].equals("#")) {
+            return null;
+        }
+        TreeNode root = new TreeNode(Integer.parseInt(arr[0]));
+        Queue<TreeNode> q = new LinkedList<TreeNode>();
+        q.offer(root);
+
+        for(int i = 1; i < arr.length; i++) {
+            TreeNode cur = q.poll();
+
+            if(!arr[i].equals("#")) {
+                cur.left = new TreeNode(Integer.parseInt(arr[i]));
+                q.offer(cur.left);
+            }
+            i++;//关键的地方
+            if(i < arr.length && !arr[i].equals("#")) {//注意判断越界
+                cur.right = new TreeNode(Integer.parseInt(arr[i]));
+                q.offer(cur.right);
+            }
+
+        }
+
+        return root;
+    }
+}

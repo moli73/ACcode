@@ -1,37 +1,44 @@
-public class Solution {
+class Solution {
     public int splitArray(int[] nums, int m) {
-        long start = 0, end = 0;
+        if(nums == null || nums.length == 0) {
+            return 0;
+        }
+        int left = nums[0];
+        int right = 0;
         for(int num : nums) {
-            end += num;
+            right += num;
+            left = Math.max(num, left);
         }
 
-        while(start + 1 < end) {
-            long mid = start + (end - start) / 2;
-            if(numOfSub(nums, mid) > m) {
-                start = mid;
+        while(left + 1 < right) {
+            int mid = left + (right - left) / 2;
+            if(check(nums, m, mid)) {
+                right = mid;
             } else {
-                end = mid;
+                left = mid;
             }
         }
-        if(numOfSub(nums, start) == m) {
-            return (int)start;
+
+        if(check(nums, m, left)) {
+            return left;
         } else {
-            return (int)end;
+            return right;
         }
     }
 
-    public int numOfSub(int[] nums, long mid) {
+    private boolean check(int[] nums, int m, int bound) {
         int count = 0;
-        int i = 0;
-        while(i < nums.length) {
-            if(nums[i] > mid) return 51;
-            long cur = 0;
-            count++;
-            while(i < nums.length && cur + nums[i] <= mid) {
-                cur += nums[i];
-                i++;
+        long sum = 0;//最关键的地方
+        for(int num : nums) {
+            sum += num;
+            if(sum > bound) {//每当当前sum > bound,     特别的如果当前数，大于bound，会count一直累加到n，n是数组长度。
+                sum = num;//下一次sum为这次的数，
+                count++;//则计数1.
+                if(count >= m) {//去等于是因为下次还的占一个位置。
+                    return false;
+                }
             }
         }
-        return count;
+        return true;//说明可分
     }
 }

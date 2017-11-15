@@ -29,6 +29,7 @@ public class Solution {
 }
 //version 2:
 // http://www.geeksforgeeks.org/find-k-th-smallest-element-in-bst-order-statistics-in-bst/
+https://discuss.leetcode.com/topic/32792/java-divide-and-conquer-solution-considering-augmenting-tree-structure-for-the-follow-up
 // start:
 // if K = root.leftElement + 1
 //    root node is the K th node.
@@ -42,15 +43,26 @@ public class Solution {
 //    goto srart
 // stop:
 //time complexity O(h)
-public class Solution {
+class Solution {
     public int kthSmallest(TreeNode root, int k) {
-        int count = helper(root.left);
-        if(count == k - 1) return root.val;
-        else if(count > k - 1) return kthSmallest(root.left, k);
-        else return kthSmallest(root.right, k - count - 1);
+        int left = count(root.left);
+        if(left == k - 1) {
+            return root.val;
+        } else if(left > k - 1) {
+            return kthSmallest(root.left, k);
+        } else {
+            return kthSmallest(root.right, k - left - 1);
+        }
     }
-    public int helper(TreeNode root){
-        if(root == null) return 0;
-        return 1 + helper(root.left) + helper(root.right);
+
+    public int count(TreeNode root) {
+        if(root == null) {
+            return 0;
+        }
+
+        int left = count(root.left);
+        int right = count(root.right);
+
+        return left + right + 1;
     }
 }

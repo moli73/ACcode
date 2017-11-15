@@ -42,3 +42,15 @@ public static String intToRoman(int num) {
     String I[] = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
     return M[num/1000] + C[(num%1000)/100] + X[(num%100)/10] + I[num%10];
 }
+
+class Solution {
+    public String intToRoman(int num) {
+        String[] unit1 = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+        String[] unit2 = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC" };
+        String[] unit3 = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+        String[] unit4 = {"", "M", "MM", "MMM"};
+        StringBuilder sb = new StringBuilder();
+        sb.append(unit4[num / 1000 % 10]).append(unit3[num / 100 % 10]).append(unit2[num / 10 % 10]).append(unit1[num %10]);
+        return sb.toString();
+    }
+}

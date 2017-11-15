@@ -38,6 +38,57 @@ public class Solution {
         return res;
     }
 }
+
+
+/*
+nums 1,3,2,4,5,6,7,8
+
+dp 1,2,3,4,5,6,7,8
+   1 2
+binary search : to find the last smaller than nums[i]
+
+
+*/
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        if(nums == null || nums.length == 0) {
+            return 0;
+        }
+        int n = nums.length;
+        int[] dp = new int[n + 1];//the tail of the LIS of length i
+        dp[0] = Integer.MIN_VALUE;
+
+        int max = 0;
+        for(int i = 0; i < n; i++) {
+            int left = 0;
+            int right = max;
+            while(left + 1 < right) {
+                int mid = left + (right - left) / 2;
+                if(dp[mid] >= nums[i]) {
+                    right = mid;
+                } else {
+                    left = mid;
+                }
+            }
+
+            int index = 0;//the biggest number smaller than nums[i]
+            if(nums[i] > dp[right]) {
+                index = right;
+            } else {
+                index = left;
+            }
+
+            if(index == max) {
+                dp[index + 1] = nums[i];
+                max = index + 1;
+            } else {
+                dp[index + 1] = Math.min(dp[index + 1], nums[i]);
+            }
+        }
+        return max;
+    }
+}
+
 (1) if x is larger than all tails, append it, increase the size by 1
 (2) if tails[i-1] < x <= tails[i], update tails[i]
 // O(nlogn) Binary Search， from jiuzhang

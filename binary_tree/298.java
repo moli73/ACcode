@@ -1,85 +1,78 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
-public class Solution {
-    int res;
+//DFS
+class Solution {
     public int longestConsecutive(TreeNode root) {
-        res = 0;
         helper(root);
         return res;
     }
-    public int helper(TreeNode root){
-        int cur = 0;
-        if(root == null) return cur;
+
+    private int res = 0;
+
+    private int helper(TreeNode root) {
+        if(root == null) {
+            return 0;
+        }
+
         int left = helper(root.left);
         int right = helper(root.right);
-        if(root.left != null && root.left.val != root.val + 1) left = 0;
-        if(root.right != null && root.right.val != root.val + 1) right = 0;
+
+        int cur = 0;
+
+        if(root.left == null || root.val + 1 != root.left.val) {//注意判空
+            left = 0;
+        }
+
+        if(root.right == null || root.val + 1 != root.right.val) {
+            right = 0;
+        }
+
         cur = Math.max(left, right) + 1;
-        res = Math.max(cur, res);
+
+        res = Math.max(res, cur);
+
         return cur;
     }
 }
-
-
-
-
-
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
-最佳答案：
-public class Solution {
-    private int res;
+//BFS
+class Solution {
     public int longestConsecutive(TreeNode root) {
-        res = 0;
-        helper(root);
+        if(root == null) {
+            return 0;
+        }
+
+        Queue<TreeNode> qNode = new LinkedList<>();
+        Queue<Integer> qLen = new LinkedList<>();
+
+        qNode.offer(root);
+        qLen.offer(1);
+
+        int res = 0;
+
+        while(!qNode.isEmpty()) {
+
+            TreeNode cur = qNode.poll();
+            int len = qLen.poll();
+
+            res = Math.max(len, res);
+
+            if(cur.left != null) {
+                qNode.offer(cur.left);
+                if(cur.left.val == cur.val + 1) {
+                    qLen.offer(len + 1);
+                } else {
+                    qLen.offer(1);
+                }
+            }
+
+            if(cur.right != null) {
+                qNode.offer(cur.right);
+                if(cur.right.val == cur.val + 1) {
+                    qLen.offer(len + 1);
+                } else {
+                    qLen.offer(1);
+                }
+            }
+        }
+
         return res;
     }
-    public int helper(TreeNode root){
-        int cur = 0;
-        if(root == null) return cur;
-        int left = helper(root.left);
-        int right = helper(root.right);
-        int leftres = 0, rightres = 0;
-        if(left == 0 || root.val + 1 == root.left.val) leftres = left;
-        if(right == 0 || root.val + 1 == root.right.val) rightres = right;
-        cur = Math.max(leftres, rightres) + 1;
-        res = Math.max(cur, res);
-        return cur;
-    }
 }
-
-
-   private int anw = 0;
-   public int longestConsecutive(TreeNode root) {
-       anw = 0;
-       helper(root);
-       return anw;
-   }
-
-   public int[] helper(TreeNode root){
-       int[] res = new int[2];//res[0] is number, res[1] is the number of nodes
-       if(root == null) return res;
-       int[] left = helper(root.left);
-       int[] right = helper(root.right);
-       int leftres = 0, rightres = 0;
-       if(left[1] == 0 || root.val + 1 == left[0]) leftres = left[1]; （多余了，因为左孩子和右孩子的值在当前层是可以检查的。）
-       if(right[1] == 0 || root.val + 1 == right[0]) rightres = right[1];
-       res[0] = root.val;
-       res[1] = Math.max(leftres, rightres) + 1;
-       anw = Math.max(anw, res[1]);
-       return res;
-   }

@@ -1,54 +1,54 @@
-public class Solution {
+class Solution {
     public List<List<String>> solveNQueens(int n) {
         List<List<String>> res = new ArrayList<>();
-        if(n < 1) { return res;}
-
-        char[][] board = new char[n][n];
-        int[] rows = new int[n];
-        helper(res, board, 0, rows, n);
+        int[] cols = new int[n + 1];//use cols[i] to record Queen position in each rows
+        //tricky point, make zero column as invalid column.
+        helper(res, cols, 1, n);
         return res;
     }
 
-    public void helper(List<List<String>> res, char[][] board, int col, int[] rows, int n){
-        if(col == n){
-            res.add(new ArrayList<String>(makeBoard(board)));
+    private void helper(List<List<String>> res, int[] cols, int row, int n) {
+        if(row == n + 1) {
+            makeBoard(res, cols, n);
             return;
         }
-
-        //rows[col] = -1;
-        for(int i = 0; i < n; ++i){
-            if(isValid(i, col, rows)){
-                board[i][col] = 'Q';
-                rows[col] = i;
-                helper(res, board, col + 1, rows, n);
-                board[i][col] = ' ';//any char is ok
-                rows[col] = -1;//any number is ok
+        for(int j = 1; j <= n; j++) {//go through each possible column
+            if(isValid(cols, row, j)) {
+                cols[row] = j;
+                helper(res, cols, row + 1, n);
+                cols[row] = 0;
             }
         }
     }
 
-    public boolean isValid(int row, int col, int[] rows){
-        for(int i = 0; i < col; ++i){
-            if(rows[i] == row || rows[i] - row == i - col || i - col == row - rows[i]){
+    private boolean isValid(int[] cols, int row, int col) {
+        for(int i = 1; i < row; i++) {
+            if(cols[i] == col) {//same column
+                return false;
+            }
+            if(cols[i] - col == i - row) {//up-left to bottom-right diag
+                return false;
+            }
+            if(cols[i] + i == col + row) {//up-right to bottom-left diag
                 return false;
             }
         }
         return true;
     }
 
-    public List<String> makeBoard(char[][] board){
-        List<String> res = new ArrayList<String>();
-        for(int i = 0; i < board.length; ++i){
-            String line = new String();
-            for(int j = 0; j < board.length; ++j){
-                if(board[i][j] == 'Q'){
-                    line += 'Q';
+    private void makeBoard(List<List<String>> res, int[] cols, int n) {
+        List<String> ans = new ArrayList<>();
+        for(int i = 1; i <= n; i++) {
+            StringBuilder sb = new StringBuilder();
+            for(int j = 1; j <= n; j++) {
+                if(j == cols[i]) {
+                    sb.append("Q");
                 } else {
-                    line += '.';
+                    sb.append(".");
                 }
             }
-            res.add(line);
+            ans.add(sb.toString());
         }
-        return res;
+        res.add(new ArrayList<String>(ans));
     }
 }

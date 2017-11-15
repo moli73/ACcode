@@ -1,52 +1,51 @@
-/**
- * Definition for singly-linked list with a random pointer.
- * class RandomListNode {
- *     int label;
- *     RandomListNode next, random;
- *     RandomListNode(int x) { this.label = x; }
- * };
- */
+one pass的解法
+time O(n)
+space O(n)
 public class Solution {
     public RandomListNode copyRandomList(RandomListNode head) {
+        if(head == null) {
+            return null;
+        }
+
         Map<RandomListNode, RandomListNode> map = new HashMap<>();
-        map.put(null, null);
+
+        RandomListNode cur = head;
         RandomListNode dummy = new RandomListNode(0);
-        RandomListNode cur = dummy;
-        while(head != null) {
-            if(map.containsKey(head)) {
-                cur.next = map.get(head);
-            } else {
-                cur.next = new RandomListNode(head.label);
-                map.put(head, cur.next);
+        RandomListNode pre = dummy;
+
+        while(cur != null) {
+            if(!map.containsKey(cur)) {
+                RandomListNode copy = new RandomListNode(cur.label);
+                map.put(cur, copy);
             }
+            pre.next = map.get(cur);
+
+            if(cur.random != null) {   注意判断random可能为null，就不需要copy
+                if(!map.containsKey(cur.random)) {
+                    RandomListNode copy = new RandomListNode(cur.random.label);
+                    map.put(cur.random, copy);
+                }
+                pre.next.random = map.get(cur.random);
+            }
+
+            pre = pre.next;
             cur = cur.next;
-            if(map.containsKey(head.random)) {
-                cur.random = map.get(head.random);
-            } else {
-                cur.random = new RandomListNode(head.random.label);
-                map.put(head.random, cur.random);
-            }
-            head = head.next;
         }
         return dummy.next;
     }
 }
 
-//version 2;
-/**
- * Definition for singly-linked list with a random pointer.
- * class RandomListNode {
- *     int label;
- *     RandomListNode next, random;
- *     RandomListNode(int x) { this.label = x; }
- * };
- */
+tricky Solution
+time O(n)
+space O(1)
+将原来的链表double，然后操作
 public class Solution {
     public RandomListNode copyRandomList(RandomListNode head) {
         if(head == null) {
             return null;
         }
         RandomListNode cur = head;
+        //double
         while(cur != null) {
             RandomListNode copy = new RandomListNode(cur.label);
             copy.next = cur.next;
@@ -54,6 +53,7 @@ public class Solution {
             cur = cur.next.next;
         }
 
+        //copy
         cur = head;
         while(cur != null) {
             if(cur.random != null) {
@@ -62,6 +62,7 @@ public class Solution {
             cur = cur.next.next;
         }
 
+        //split
         RandomListNode res = head.next;
         cur = head;
         while(cur != null && cur.next != null) {

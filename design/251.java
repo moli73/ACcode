@@ -1,4 +1,33 @@
 public class Vector2D implements Iterator<Integer> {
+    private Iterator<List<Integer>> itList;
+    private Iterator<Integer> it;
+    public Vector2D(List<List<Integer>> vec2d) {
+        itList = vec2d.iterator();
+    }
+
+    @Override
+    public Integer next() {
+        return it.next();
+    }
+
+    @Override
+    public boolean hasNext() {
+        if(it != null && it.hasNext()) {//刚开始的时候it为null，其余情况，如果it.hasNext()
+            return true;
+        } else {//it为null或者!it.hasNext()
+            while(itList.hasNext()) {//只要itList.hasNext()，就要不停迭代。
+                it = itList.next().iterator();//case like: [[],[],[2]]
+                if(it.hasNext()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}
+
+//other anwser
+public class Vector2D implements Iterator<Integer> {
     private Iterator<List<Integer>> i;
     private Iterator<Integer> j;
     public Vector2D(List<List<Integer>> vec2d) {

@@ -1,4 +1,14 @@
-//the time complexiy is O(log(m + n))
+time: O(log(m + n))
+space: O(1)
+
+1.注意第kth smallest number,脚标是k - 1
+2.注意加脚标其实点start
+3.移动start，实现删除元素的操作
+4.每次删掉k／2，找剩下的k - k／2，不能写成k／2，不一定整除。。。。。。
+
+s + k - 1,是第kth个number
+nums.length - s是当前数组有的元素个数
+
 public class Solution {
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
         int m = nums1.length, n = nums2.length;

@@ -1,3 +1,30 @@
+class Solution {
+    public int trap(int[] height) {
+        int right = height.length - 1;
+        int left = 0;
+        int bound = 0;//左右公用一个bound是可行的，初始为0，兜不住水
+        int res = 0;
+        while(left < right) {
+            if(height[left] < height[right]) {   左边矮
+                if(height[left] < bound) {      左边比bound矮，可以兜住水
+                    res += bound - height[left];
+                } else {
+                    bound = height[left];      左边比bound高，兜不住水了，改变bound
+                }
+                left++;
+            } else {
+                if(height[right] < bound) {
+                    res += bound - height[right];
+                } else {
+                    bound = height[right];
+                }
+                right--;
+            }
+        }
+        return res;
+    }
+}
+
 public class Solution {
     public int trap(int[] height) {
         if(height.length == 0) {

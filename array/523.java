@@ -1,19 +1,23 @@
 //HashMap better code
 //time O(n)
-//space O(n)
+// space: O(min(n, k))
 class Solution {
     public boolean checkSubarraySum(int[] nums, int k) {
-        Map<Integer, Integer> map = new HashMap<>();
-        map.put(0, -1);
+        //use hashmap to record the remainder of the former preSum and smalleset index
+        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
         int sum = 0;
+        map.put(0, -1);
         for(int i = 0; i < nums.length; i++) {
             sum += nums[i];
-            int remainder = k == 0 ? sum : sum % k;
+            //to get the remainder from the preSum
+            int remainder = sum;
+            if(k != 0) remainder %= k;
+            //same remainder must not be the last one
             if(map.containsKey(remainder)) {
                 if(i - map.get(remainder) > 1) {
                     return true;
                 }
-            } else {
+            } else {//only record the oldes index of certain remainder
                 map.put(remainder, i);
             }
         }
